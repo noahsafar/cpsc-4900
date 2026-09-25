@@ -1,0 +1,16 @@
+# activation caches: large, and regenerable from code + data
+cache/
+*.pt
+*.safetensors
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# secrets
+.env
+*.token
+
+# macOS
+.DS_Store

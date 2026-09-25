@@ -1,0 +1,4 @@
+# Versions used for all results so far (Colab T4). Colab ships torch preinstalled.
+torch==2.11.0
+transformers==5.17.0
+accelerate
