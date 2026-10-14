@@ -21,6 +21,11 @@ See [LOG.md](LOG.md) for the running log.
 ```
 src/pipeline.py              load model, format prompt, greedy generation, last-token extraction, cache save/load
 data/toy_prompts.jsonl       10 injected/clean prompt pairs
+data/pilot_v1.jsonl          pilot prompts: 100 InjecAgent cases × {base, enhanced}
+data/pilot_v2.jsonl          pilot prompts: the same cases × 4 attack-family templates
+data/pilot_v*_records.jsonl  model output and InjecAgent label for each pilot prompt
+data/pilot_v1_review.txt     46 v1 outputs exported for hand-checking the labels
+data/LICENSE-InjecAgent      MIT license of InjecAgent, whose test cases the pilot prompts are built from
 notebooks/week1_sanity.ipynb infrastructure checks and the toy run, with findings
 notebooks/week2_pilot.ipynb  InjecAgent pilot: 600 labeled prompts, attack success rate by framing
 docs/proposal.pdf            project proposal
