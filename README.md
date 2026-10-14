@@ -10,7 +10,8 @@ The full proposal is in [docs/proposal.pdf](docs/proposal.pdf).
 ## Status
 
 - **Phase 1, infrastructure (Sep 18–27):** done. Activations are extracted and cached end to end for 20 toy prompts, and the whole run reproduces exactly on a second pass.
-- **Phase 2, pilot data (Sep 28–Oct 9):** next. About 200 labeled prompts, with attack success rate measured per attack family.
+- **Phase 2, pilot data (Sep 28–Oct 9):** done, except hand-checking a sample of the automatic labels. 600 InjecAgent prompts (100 cases × 6 injection framings) are labeled with InjecAgent's own parser and cached. Attack success rate ranges from 2% to 90% depending only on the framing; see [notebooks/week2_pilot.ipynb](notebooks/week2_pilot.ipynb).
+- **Phase 3, pilot probes (Oct 12–19):** next.
 - **Go/no-go checkpoint:** Oct 19.
 
 See [LOG.md](LOG.md) for the running log.
@@ -21,6 +22,7 @@ See [LOG.md](LOG.md) for the running log.
 src/pipeline.py              load model, format prompt, greedy generation, last-token extraction, cache save/load
 data/toy_prompts.jsonl       10 injected/clean prompt pairs
 notebooks/week1_sanity.ipynb infrastructure checks and the toy run, with findings
+notebooks/week2_pilot.ipynb  InjecAgent pilot: 600 labeled prompts, attack success rate by framing
 docs/proposal.pdf            project proposal
 cache/                       activation caches (not in git: ~184 KB per prompt)
 ```
