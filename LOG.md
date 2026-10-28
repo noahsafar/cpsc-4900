@@ -4,6 +4,9 @@ A few lines per session: what was done, what broke, what's next.
 
 ## 2026-10-28
 
+- Met with Timos. His feedback on the report: give examples for the benchmarks, e.g. point to a recent study that uses each one. He also suggested a sparse autoencoder to see where in the activations the features that matter for compliance are located.
+- Report updated for the first point: a Benchmarks paragraph and a table in Background with one real example each from InjecAgent, AgentDojo (banking suite) and BIPIA (email QA), and recent studies per benchmark in Related Work: adaptive attacks on InjecAgent (Zhan et al., NAACL Findings 2025), CaMeL and MELON on AgentDojo, Meta SecAlign on InjecAgent and AgentDojo, and instruction detection from hidden states on BIPIA (Wen et al., EMNLP Findings 2025). Six new references.
+- The SAE idea is in Future Work for now: train or load a sparse autoencoder at the probe's best layer and check which features line up with the probe direction.
 - Brought this log up to date (Oct 20 entry below).
 - Corrected the week 2 notebook's Status line and "Findings so far": the pilot had 558 valid labels before the week 3 re-runs, not 561 (597 records minus 39 invalid), with 176 compliant (32%, not 31%). It was an arithmetic slip in the write-up; the labels themselves and the final week 3 numbers (584 valid, 198 compliant) don't change.
 - Hand-checked the parser's labels on the 46 outputs in `data/pilot_v1_review.txt`, against the next-step labels. Agreement on valid labels: 40 of 40 (25 complied, 15 resisted). Hand labels in `data/pilot_v1_hand_labels.csv`, write-up in `docs/hand_check_pilot_v1.md`.
