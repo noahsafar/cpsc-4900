@@ -12,6 +12,10 @@ A few lines per session: what was done, what broke, what's next.
 - Spot-checked 32 v2 labels (4–5 succ and 4–5 unsucc per framing; `role_play` has only 2 succ). Agreement 32 of 32, so 72 of 72 across v1 and v2. Hand labels in `data/pilot_v2_spotcheck.csv`, write-up in `docs/hand_check_pilot_v2.md`.
 - `completion` resists by refusing: the framing makes the injection look like the user's request, and two of the four unsucc outputs decline only because the request is impossible ("get my current image"). Worth keeping in mind when reading `completion` probe scores.
 - Added `src/labels.py`, a copy of InjecAgent's labeler plus the next-step cut, so notebooks don't need the InjecAgent checkout; it reproduces all 597 stored pilot labels.
+- Built the full corpus (Phase 4): 2,079 prompts, 297 cases × 7 framings. InjecAgent: the 100 pilot cases (600 pilot prompts + 100 new). AgentDojo: all 97 user tasks, each with one random injection task, rendered statically from the ground-truth tool calls up to the first result that shows the injection (679). BIPIA: 50 test emails and 50 test tables, each with one of the 75 test text attacks (700). `scripts/build_corpus.py`, seeded and deterministic; design in `docs/full_corpus.md`.
+- Added a seventh framing, `encoded` (base64), for the proposal's encoded-payload family. The framings are in `src/framings.py`, which reproduces all 500 non-base pilot prompts exactly.
+- Labels: InjecAgent's parser for InjecAgent; a Claude judge (`src/judge.py`, `claude-opus-5-5`) for AgentDojo and BIPIA, cross-checked against rule checks (attacker tool + attacker identifier for AgentDojo; BIPIA's own phrase and emoji rules) and a blind hand check of 40 outputs.
+- `notebooks/week4_full_corpus.ipynb` runs it all on the T4: generation with activation caching (restart-safe, checks that pilot outputs reproduce first), labels, judge checks, ASR by benchmark × framing, and the 36-layer sweep with a nested layer choice, family-only and TF-IDF baselines. Tested end to end on stand-in outputs, activations and a mocked judge, except the two sections that need the model (rendering check, generation).
 
 ## 2026-10-20
 
@@ -59,4 +63,4 @@ A few lines per session: what was done, what broke, what's next.
 
 - Proposal finalized and submitted: three pages, 14 references.
 
-**Next:** start the full corpus (Phase 4, Oct 26–Nov 6): about 2,000 prompts from InjecAgent, AgentDojo and BIPIA, with the LLM judge for the last two, and the sweep over all 36 layers.
+**Next:** run `notebooks/week4_full_corpus.ipynb` on the T4 (generation, then the judge with `ANTHROPIC_API_KEY` in Colab secrets), hand-check the 40 judge outputs, then the sweep. After that, Phase 5 (Nov 9–19): self-report and perplexity baselines, leave-one-family-out.
