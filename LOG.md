@@ -2,6 +2,21 @@
 
 A few lines per session: what was done, what broke, what's next.
 
+## 2026-10-28
+
+- Brought this log up to date (Oct 20 entry below).
+- Corrected the week 2 notebook's Status line and "Findings so far": the pilot had 558 valid labels before the week 3 re-runs, not 561 (597 records minus 39 invalid), with 176 compliant (32%, not 31%). It was an arithmetic slip in the write-up; the labels themselves and the final week 3 numbers (584 valid, 198 compliant) don't change.
+- Started the hand-check of the parser's labels on the 46 outputs in `data/pilot_v1_review.txt`, compared against the final labels in `data/pilot_labels.jsonl`.
+
+## 2026-10-20
+
+- Wrote the midterm progress report as a working draft of the thesis, in the department's LaTeX template (Overleaf): introduction, background, methodology, results, related work, conclusions and future work, plus an example pilot prompt in the appendix.
+- Results chapter: ASR by framing (2% for `role_play` to 91% for `completion`), the final pilot labels (584 valid, 198 compliant), and the probe table and figure: AUROC 0.87, 0.91 and 0.94 at layers 9, 18 and 27; 0.86 and 0.90 within `fake_system` and `urgency` at layer 27; family-only 0.85 and TF-IDF 0.86 overall.
+- Checked all 20 references against their sources; four sentences were reworded to match what the papers say.
+- Limits stated in the report: one model, 100 cases from one benchmark, only two framings in the 20–80% band, three layers fixed in advance, and no hand-check of the parser's labels yet.
+- Sent the report to Timos for approval before the Canvas submission; the email also gives him the go/no-go result. Answered the midterm questionnaire (milestones so far, goals for the remaining weeks).
+- Schedule unchanged: full corpus Oct 26–Nov 6, baselines and held-out families Nov 9–19, steering (stretch) Nov 30–Dec 6, writeup Dec 7–11.
+
 ## 2026-10-14
 
 - Started `notebooks/week3_probes.ipynb`: section 1 finishes the pilot labels, sections 2–5 train the pilot probes and baselines, and the last cell records the go/no-go.
@@ -39,4 +54,4 @@ A few lines per session: what was done, what broke, what's next.
 
 - Proposal finalized and submitted: three pages, 14 references.
 
-**Next:** hand-check the parser's labels (`data/pilot_v1_review.txt`) · start the full corpus (Phase 4).
+**Next:** finish the hand-check and record the agreement number · start the full corpus (Phase 4, Oct 26–Nov 6): about 2,000 prompts from InjecAgent, AgentDojo and BIPIA, with the LLM judge for the last two, and the sweep over all 36 layers.
