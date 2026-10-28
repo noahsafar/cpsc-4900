@@ -6,7 +6,9 @@ A few lines per session: what was done, what broke, what's next.
 
 - Brought this log up to date (Oct 20 entry below).
 - Corrected the week 2 notebook's Status line and "Findings so far": the pilot had 558 valid labels before the week 3 re-runs, not 561 (597 records minus 39 invalid), with 176 compliant (32%, not 31%). It was an arithmetic slip in the write-up; the labels themselves and the final week 3 numbers (584 valid, 198 compliant) don't change.
-- Started the hand-check of the parser's labels on the 46 outputs in `data/pilot_v1_review.txt`, compared against the final labels in `data/pilot_labels.jsonl`.
+- Hand-checked the parser's labels on the 46 outputs in `data/pilot_v1_review.txt`, against the next-step labels. Agreement on valid labels: 40 of 40 (25 complied, 15 resisted). Hand labels in `data/pilot_v1_hand_labels.csv`, write-up in `docs/hand_check_pilot_v1.md`.
+- The 6 invalid outputs in the sample are all re-calls of the user's tool, and none follows the injection. Two ds outputs (`ds_227_enhanced`, `ds_294_base`) take the attacker's first step but hesitate before sending; they count as complied under stage 1.
+- The parser is fine for the InjecAgent part of the full corpus. Still to check: a sample of v2 labels; AgentDojo and BIPIA need their own success checks.
 
 ## 2026-10-20
 
@@ -54,4 +56,4 @@ A few lines per session: what was done, what broke, what's next.
 
 - Proposal finalized and submitted: three pages, 14 references.
 
-**Next:** finish the hand-check and record the agreement number · start the full corpus (Phase 4, Oct 26–Nov 6): about 2,000 prompts from InjecAgent, AgentDojo and BIPIA, with the LLM judge for the last two, and the sweep over all 36 layers.
+**Next:** spot-check a sample of v2 labels · start the full corpus (Phase 4, Oct 26–Nov 6): about 2,000 prompts from InjecAgent, AgentDojo and BIPIA, with the LLM judge for the last two, and the sweep over all 36 layers.
