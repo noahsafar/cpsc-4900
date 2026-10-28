@@ -2,3 +2,8 @@
 torch==2.11.0
 transformers==5.17.0
 accelerate
+anthropic==2.3.0   # the judge (week 4)
+
+# only for scripts/build_corpus.py, which has already been run
+# agentdojo==0.1.35
+# nltk
