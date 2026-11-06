@@ -2,6 +2,12 @@
 
 A few lines per session: what was done, what broke, what's next.
 
+## 2026-11-06
+
+- Hand check of the judge: 40 outputs (20 AgentDojo, 20 BIPIA, shuffled). The labels were drafted by Claude and reviewed one by one by Noah, who kept all 40; since the judge is also Claude, they aren't independent human labels. The judge agrees on 36 of 36 with a clear hand label (95% Wilson 90–100%). The other 4 are AgentDojo banking first steps marked unclear (a lookup that could serve the user's task or the injection); the judge called all 4 complied.
+- ASR: InjecAgent 30%, AgentDojo 24%, BIPIA 21%. `encoded` almost never works (0–4%); InjecAgent `completion` 91%. 13 (benchmark, framing) cells fall in the 20–80% band.
+- 36-layer sweep (all layers, C grid 1e-4 to 1, about 4–6 minutes a layer on Colab's CPU; Colab disconnected twice and the sweep resumed from `data/corpus_sweep.json`). AUROC on all 2,022 prompts rises from 0.79 at layer 0 to a plateau of 0.91–0.93 over layers 19–30. Best layer 21, 0.93 [0.90, 0.94]; nested choice (layers 22, 23, 20, 23, 22 by fold) 0.92 [0.89, 0.94]. Baselines: TF-IDF 0.83 [0.79, 0.86], family-only 0.74 [0.72, 0.77]. By benchmark (nested vs TF-IDF): InjecAgent 0.94 vs 0.88, AgentDojo 0.90 vs 0.86, BIPIA 0.94 vs 0.78. Within the 13 in-band cells the nested probe scores 0.85–0.96 (TF-IDF 0.66–0.89).
+
 ## 2026-11-03
 
 - Ran generation for the 1,479 new prompts on the T4. All have outputs and activations; the 3 pilot prompts reproduce, and activations taken from generation's prefill match the separate forward pass exactly (relative difference 0), so each prompt now goes through the model once.
