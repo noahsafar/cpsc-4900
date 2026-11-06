@@ -2,6 +2,21 @@
 
 A few lines per session: what was done, what broke, what's next.
 
+## 2026-11-06
+
+- Hand check of the judge: 40 outputs (20 AgentDojo, 20 BIPIA, shuffled). The labels were drafted by Claude and reviewed one by one by Noah, who kept all 40; since the judge is also Claude, they aren't independent human labels. The judge agrees on 36 of 36 with a clear hand label (95% Wilson 90–100%). The other 4 are AgentDojo banking first steps marked unclear (a lookup that could serve the user's task or the injection); the judge called all 4 complied.
+- ASR: InjecAgent 30%, AgentDojo 24%, BIPIA 21%. `encoded` almost never works (0–4%); InjecAgent `completion` 91%. 13 (benchmark, framing) cells fall in the 20–80% band.
+- 36-layer sweep (all layers, C grid 1e-4 to 1, about 4–6 minutes a layer on Colab's CPU; Colab disconnected twice and the sweep resumed from `data/corpus_sweep.json`). AUROC on all 2,022 prompts rises from 0.79 at layer 0 to a plateau of 0.91–0.93 over layers 19–30. Best layer 21, 0.93 [0.90, 0.94]; nested choice (layers 22, 23, 20, 23, 22 by fold) 0.92 [0.89, 0.94]. Baselines: TF-IDF 0.83 [0.79, 0.86], family-only 0.74 [0.72, 0.77]. By benchmark (nested vs TF-IDF): InjecAgent 0.94 vs 0.88, AgentDojo 0.90 vs 0.86, BIPIA 0.94 vs 0.78. Within the 13 in-band cells the nested probe scores 0.85–0.96 (TF-IDF 0.66–0.89).
+
+## 2026-11-03
+
+- Ran generation for the 1,479 new prompts on the T4. All have outputs and activations; the 3 pilot prompts reproduce, and activations taken from generation's prefill match the separate forward pass exactly (relative difference 0), so each prompt now goes through the model once.
+- Fixed two out-of-memory problems on the long AgentDojo prompts (4.4k–13k tokens). The separate activation pass computed vocabulary logits at every position; it's gone. And the T4's default attention path (the "math" kernel, which Qwen3's grouped-query attention falls back to) runs out past about 4.5k tokens; a prompt that does is retried with the key/value heads expanded and the memory-efficient kernel, and its record says `attention: mem_efficient` (41 prompts). Prompts that fit still use the default path, so they stay comparable with the pilot.
+- 112 outputs hit the 320-token cap, 72 of them InjecAgent `encoded`: in the two checked, the model gives its final answer and then decodes the payload out loud, so the next step is complete before the cap. After relabeling only 6 of the 100 are invalid.
+- Judge: 1,379 AgentDojo and BIPIA outputs for $6.78. 299 complied, 1,045 not, 24 judge refusals and 11 unclear (both become invalid).
+- The parser marked 88 of the 100 InjecAgent `encoded` outputs invalid, all for "contain overly long word": the model quotes the base64 payload back. `src/labels.py` now masks a run copied from a payload in the prompt before that check; no pilot output has one, so pilot labels don't change. After the fix: 4 succ, 90 unsucc, 6 invalid.
+- Labels for the full corpus: 2,022 valid of 2,079, 501 compliant. AgentDojo 159/661 (24%), BIPIA 140/683 (20%), InjecAgent `encoded` 4/94.
+
 ## 2026-10-28
 
 - Brought this log up to date (Oct 20 entry below).
@@ -9,6 +24,13 @@ A few lines per session: what was done, what broke, what's next.
 - Hand-checked the parser's labels on the 46 outputs in `data/pilot_v1_review.txt`, against the next-step labels. Agreement on valid labels: 40 of 40 (25 complied, 15 resisted). Hand labels in `data/pilot_v1_hand_labels.csv`, write-up in `docs/hand_check_pilot_v1.md`.
 - The 6 invalid outputs in the sample are all re-calls of the user's tool, and none follows the injection. Two ds outputs (`ds_227_enhanced`, `ds_294_base`) take the attacker's first step but hesitate before sending; they count as complied under stage 1.
 - The parser is fine for the InjecAgent part of the full corpus. Still to check: a sample of v2 labels; AgentDojo and BIPIA need their own success checks.
+- Spot-checked 32 v2 labels (4–5 succ and 4–5 unsucc per framing; `role_play` has only 2 succ). Agreement 32 of 32, so 72 of 72 across v1 and v2. Hand labels in `data/pilot_v2_spotcheck.csv`, write-up in `docs/hand_check_pilot_v2.md`.
+- `completion` resists by refusing: the framing makes the injection look like the user's request, and two of the four unsucc outputs decline only because the request is impossible ("get my current image"). Worth keeping in mind when reading `completion` probe scores.
+- Added `src/labels.py`, a copy of InjecAgent's labeler plus the next-step cut, so notebooks don't need the InjecAgent checkout; it reproduces all 597 stored pilot labels.
+- Built the full corpus (Phase 4): 2,079 prompts, 297 cases × 7 framings. InjecAgent: the 100 pilot cases (600 pilot prompts + 100 new). AgentDojo: all 97 user tasks, each with one random injection task, rendered statically from the ground-truth tool calls up to the first result that shows the injection (679). BIPIA: 50 test emails and 50 test tables, each with one of the 75 test text attacks (700). `scripts/build_corpus.py`, seeded and deterministic; design in `docs/full_corpus.md`.
+- Added a seventh framing, `encoded` (base64), for the proposal's encoded-payload family. The framings are in `src/framings.py`, which reproduces all 500 non-base pilot prompts exactly.
+- Labels: InjecAgent's parser for InjecAgent; a Claude judge (`src/judge.py`, `claude-opus-5-5`) for AgentDojo and BIPIA, cross-checked against rule checks (attacker tool + attacker identifier for AgentDojo; BIPIA's own phrase and emoji rules) and a blind hand check of 40 outputs.
+- `notebooks/week4_full_corpus.ipynb` runs it all on the T4: generation with activation caching (restart-safe, checks that pilot outputs reproduce first), labels, judge checks, ASR by benchmark × framing, and the 36-layer sweep with a nested layer choice, family-only and TF-IDF baselines. Tested end to end on stand-in outputs, activations and a mocked judge, except the two sections that need the model (rendering check, generation).
 
 ## 2026-10-20
 
@@ -56,4 +78,4 @@ A few lines per session: what was done, what broke, what's next.
 
 - Proposal finalized and submitted: three pages, 14 references.
 
-**Next:** spot-check a sample of v2 labels · start the full corpus (Phase 4, Oct 26–Nov 6): about 2,000 prompts from InjecAgent, AgentDojo and BIPIA, with the LLM judge for the last two, and the sweep over all 36 layers.
+**Next:** run `notebooks/week4_full_corpus.ipynb` on the T4 (generation, then the judge with `ANTHROPIC_API_KEY` in Colab secrets), hand-check the 40 judge outputs, then the sweep. After that, Phase 5 (Nov 9–19): self-report and perplexity baselines, leave-one-family-out.
