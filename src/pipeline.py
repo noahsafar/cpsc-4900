@@ -23,8 +23,9 @@ def load_model(model_name=MODEL_NAME):
     return model, tok
 
 
-def format_prompt(tok, messages):
-    return tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+def format_prompt(tok, messages, tools=None):
+    """tools: OpenAI-style function schemas (AgentDojo); None renders exactly as before."""
+    return tok.apply_chat_template(messages, tools=tools, tokenize=False, add_generation_prompt=True)
 
 
 def encode(tok, text, device):
