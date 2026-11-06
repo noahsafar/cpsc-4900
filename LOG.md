@@ -2,6 +2,15 @@
 
 A few lines per session: what was done, what broke, what's next.
 
+## 2026-11-03
+
+- Ran generation for the 1,479 new prompts on the T4. All have outputs and activations; the 3 pilot prompts reproduce, and activations taken from generation's prefill match the separate forward pass exactly (relative difference 0), so each prompt now goes through the model once.
+- Fixed two out-of-memory problems on the long AgentDojo prompts (4.4k–13k tokens). The separate activation pass computed vocabulary logits at every position; it's gone. And the T4's default attention path (the "math" kernel, which Qwen3's grouped-query attention falls back to) runs out past about 4.5k tokens; a prompt that does is retried with the key/value heads expanded and the memory-efficient kernel, and its record says `attention: mem_efficient` (41 prompts). Prompts that fit still use the default path, so they stay comparable with the pilot.
+- 112 outputs hit the 320-token cap, 72 of them InjecAgent `encoded`: the model answers, then decodes the payload out loud. Their next step is complete before the cap.
+- Judge: 1,379 AgentDojo and BIPIA outputs for $6.78. 299 complied, 1,045 not, 24 judge refusals and 11 unclear (both become invalid).
+- The parser marked 88 of the 100 InjecAgent `encoded` outputs invalid, all for "contain overly long word": the model quotes the base64 payload back. `src/labels.py` now masks a run copied from a payload in the prompt before that check; no pilot output has one, so pilot labels don't change. After the fix: 4 succ, 90 unsucc, 6 invalid.
+- Labels for the full corpus: 2,022 valid of 2,079, 501 compliant. AgentDojo 159/661 (24%), BIPIA 140/683 (20%), InjecAgent `encoded` 4/94.
+
 ## 2026-10-28
 
 - Brought this log up to date (Oct 20 entry below).
